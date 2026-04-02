@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Enter — Suhaina's World 🌙</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#03001a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Raleway:ital,wght@0,200;0,300;0,400;1,300&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#03001a;--navy:#050028;--deep:#0a003a;
+  --cyan:#00f5ff;--pink:#ff2d78;--purple:#9d4edd;--gold:#ffd700;
+  --neon-c:0 0 10px #00f5ff,0 0 30px #00f5ff,0 0 60px #00f5ffaa;
+  --neon-p:0 0 10px #ff2d78,0 0 30px #ff2d78,0 0 60px #ff2d78aa;
+  --neon-g:0 0 10px #ffd700,0 0 25px #ffd700,0 0 50px #ffd70088;
+  --glass:rgba(0,200,255,0.05);--glassh:rgba(0,200,255,0.1);
+  --border:rgba(0,245,255,0.15);--borderh:rgba(0,245,255,0.4);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Raleway',sans-serif;font-weight:300;cursor:none;
+  -webkit-font-smoothing:antialiased;}
+
+/* CURSOR */
+#cur,#cur2{position:fixed;pointer-events:none;z-index:99999;border-radius:50%;transform:translate(-50%,-50%);will-change:transform;}
+#cur{width:8px;height:8px;background:var(--cyan);box-shadow:var(--neon-c);}
+#cur2{width:36px;height:36px;border:1px solid rgba(0,245,255,.5);
+  transition:width .35s,height .35s,border-color .35s;}
+.hover-cur #cur2{width:56px;height:56px;border-color:rgba(255,45,120,.5);}
+@media(pointer:coarse){#cur,#cur2{display:none;}}
+
+/* CANVAS */
+#starCvs{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* NIGHT SCENE SVG */
+#night-scene{
+  position:fixed;bottom:0;left:0;right:0;height:55vh;z-index:1;pointer-events:none;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.moon-wrap{
+  position:fixed;top:6vh;right:12vw;z-index:2;
+  animation:moonFloat 8s ease-in-out infinite;
+}
+.moon{
+  width:clamp(80px,10vw,130px);height:clamp(80px,10vw,130px);
+  border-radius:50%;
+  background:radial-gradient(circle at 38% 38%,#fffde7,#fff9c4,#ffd740);
+  box-shadow:0 0 40px rgba(255,215,64,.8),0 0 100px rgba(255,215,64,.4),0 0 200px rgba(255,215,64,.15);
+  position:relative;overflow:hidden;
+}
+.moon-crater{position:absolute;border-radius:50%;background:rgba(200,170,0,.2);}
+.crater-1{width:20%;height:20%;top:20%;left:30%;}
+.crater-2{width:12%;height:12%;top:55%;left:58%;}
+.crater-3{width:8%;height:8%;top:35%;left:65%;}
+@keyframes moonFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+
+/* GIRL SILHOUETTE */
+.girl-silhouette{
+  position:fixed;right:calc(12vw + clamp(80px,10vw,130px) + 20px);
+  bottom:0;z-index:3;
+  width:clamp(50px,6vw,80px);
+  filter:drop-shadow(0 0 20px rgba(255,45,120,.6));
+  animation:girlFloat 7s ease-in-out infinite;
+}
+@keyframes girlFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-18px);}}
+
+/* HILLS */
+.hills{position:fixed;bottom:0;left:0;right:0;z-index:1;pointer-events:none;}
+
+/* FLOATING HEARTS */
+.fheart{position:fixed;pointer-events:none;z-index:9990;
+  animation:fhUp 4s ease-out forwards;will-change:transform,opacity;}
+@keyframes fhUp{
+  0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg);}
+  100%{opacity:0;transform:translateY(-380px) scale(.1) rotate(30deg);}
+}
+
+/* SCENE CONTAINER */
+#scene{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;perspective:1200px;
+}
+#tilt-wrap{width:100%;max-width:440px;transform-style:preserve-3d;will-change:transform;
+  transition:transform .12s linear;}
+
+/* CARD */
+.card{
+  background:linear-gradient(135deg,rgba(0,20,60,.85),rgba(0,5,30,.9));
+  border:1px solid var(--border);border-radius:24px;
+  padding:clamp(1.8rem,4vw,2.8rem) clamp(1.5rem,4vw,2.5rem);
+  backdrop-filter:blur(40px) saturate(180%);
+  box-shadow:0 0 0 1px rgba(0,245,255,.05),0 30px 100px rgba(0,0,0,.8),
+    0 0 60px rgba(0,245,255,.06),inset 0 1px 0 rgba(0,245,255,.1);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:-1px;border-radius:24px;
+  background:linear-gradient(135deg,rgba(0,245,255,.2),transparent 40%,rgba(157,78,221,.2),transparent 70%,rgba(255,45,120,.15));
+  mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;mask-composite:exclude;
+  animation:borderFlow 4s linear infinite;
+}
+@keyframes borderFlow{0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}
+
+/* CARD GLOW ORBS */
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(50px);}
+.orb-1{width:150px;height:150px;background:rgba(0,245,255,.07);top:-40px;left:-40px;animation:orbMove 10s ease-in-out infinite;}
+.orb-2{width:120px;height:120px;background:rgba(255,45,120,.06);bottom:-30px;right:-30px;animation:orbMove 12s ease-in-out infinite reverse;}
+@keyframes orbMove{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,15px);}}
+
+/* LOGO */
+.logo-area{text-align:center;margin-bottom:1.8rem;position:relative;z-index:1;}
+.logo-icon{font-size:2.8rem;display:block;margin-bottom:.4rem;
+  animation:logoPulse 2s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px rgba(255,45,120,.6));}
+  50%{transform:scale(1.08);filter:drop-shadow(0 0 25px rgba(255,45,120,1));}}
+.logo-title{font-family:'Orbitron',monospace;font-size:clamp(.85rem,2.5vw,1.1rem);
+  font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--cyan),var(--pink),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-shadow:none;filter:drop-shadow(0 0 8px rgba(0,245,255,.3));}
+.logo-sub{font-family:'Sacramento',cursive;font-size:clamp(1.1rem,3vw,1.4rem);
+  color:rgba(255,215,0,.7);margin-top:.2rem;letter-spacing:.05em;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:.8rem;margin:.5rem 0 1.5rem;position:relative;z-index:1;}
+.div-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+.div-star{color:var(--cyan);font-size:.7rem;}
+
+/* FORM */
+.fg{position:relative;z-index:1;margin-bottom:1.2rem;}
+.flabel{display:block;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(0,245,255,.5);margin-bottom:.55rem;font-family:'Orbitron',monospace;}
+.finput{
+  width:100%;background:rgba(0,245,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:.85rem 1rem .85rem 2.8rem;
+  color:#fff;font-family:'Raleway',sans-serif;font-size:.95rem;font-weight:300;
+  outline:none;-webkit-appearance:none;letter-spacing:.05em;
+  transition:border-color .35s,background .35s,box-shadow .35s;
+}
+.finput::placeholder{color:rgba(0,245,255,.25);font-style:italic;}
+.finput:focus{border-color:rgba(0,245,255,.5);background:rgba(0,245,255,.06);
+  box-shadow:0 0 0 3px rgba(0,245,255,.08),0 0 25px rgba(0,245,255,.1);}
+.finput.err{border-color:rgba(255,80,80,.6);}
+.ficon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+  font-size:.9rem;pointer-events:none;opacity:.5;transition:opacity .3s;}
+.fg:focus-within .ficon{opacity:1;}
+.ferr{font-size:.6rem;color:rgba(255,100,100,.85);margin-top:.4rem;padding-left:.3rem;letter-spacing:.1em;display:none;}
+.ferr.show{display:block;}
+
+/* TOGGLE PASS */
+.passToggle{position:absolute;right:.9rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:rgba(0,245,255,.5);font-size:.9rem;cursor:none;
+  transition:color .3s;}
+.passToggle:hover{color:var(--cyan);}
+
+/* SUBMIT */
+.sbtn{
+  width:100%;margin-top:1.5rem;padding:1rem;border-radius:50px;border:none;
+  background:linear-gradient(135deg,#00b4d8,#00f5ff,#7b2d8b,#ff2d78);
+  background-size:300% 300%;animation:btnGrad 5s ease infinite;
+  color:#fff;font-family:'Orbitron',monospace;font-size:.75rem;
+  font-weight:700;letter-spacing:.25em;text-transform:uppercase;
+  box-shadow:0 0 30px rgba(0,245,255,.3),0 10px 40px rgba(0,0,0,.4);
+  cursor:none;overflow:hidden;position:relative;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s;
+}
+@keyframes btnGrad{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.sbtn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 50px rgba(0,245,255,.5),0 15px 50px rgba(0,0,0,.5);}
+.sbtn-shine{position:absolute;inset:0;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.2) 50%,transparent 62%);
+  background-size:200% 100%;animation:shine 2.5s ease-in-out infinite;}
+@keyframes shine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.sbtn-txt{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:.6rem;}
+.sloader{display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{100%{transform:rotate(360deg);}}
+
+/* MODE TOGGLE */
+.mode-row{text-align:center;margin-top:1.2rem;position:relative;z-index:1;}
+.mode-row span{font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:.08em;}
+.mode-link{background:none;border:none;color:var(--cyan);font-size:.72rem;cursor:none;
+  letter-spacing:.08em;text-decoration:underline;transition:color .3s;}
+.mode-link:hover{color:#fff;}
+
+/* SUCCESS OVERLAY */
+#succ{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,rgba(0,5,30,.97),rgba(3,0,26,1));
+  opacity:0;pointer-events:none;transition:opacity .8s ease;text-align:center;padding:2rem;}
+#succ.show{opacity:1;pointer-events:all;}
+.succ-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 1.5rem;
+  background:linear-gradient(135deg,rgba(0,245,255,.2),rgba(255,45,120,.2));
+  border:2px solid rgba(0,245,255,.4);display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;animation:succPulse .8s cubic-bezier(.34,1.56,.64,1) both;box-shadow:var(--neon-c);}
+@keyframes succPulse{from{transform:scale(0) rotate(-180deg);}to{transform:scale(1) rotate(0deg);}}
+.succ-title{font-family:'Sacramento',cursive;font-size:clamp(2.5rem,8vw,4rem);
+  color:var(--gold);text-shadow:var(--neon-g);margin-bottom:.8rem;
+  animation:fadeUp .9s ease forwards .3s;opacity:0;}
+.succ-sub{font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.4em;
+  color:rgba(0,245,255,.7);animation:fadeUp .9s ease forwards .6s;opacity:0;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ERROR TOAST */
+#errToast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:rgba(255,30,80,.15);border:1px solid rgba(255,30,80,.4);border-radius:50px;
+  padding:.6rem 1.8rem;font-size:.78rem;color:#ff6b8a;letter-spacing:.1em;
+  z-index:9999;opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;}
+#errToast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* BOTTOM TEXT */
+.secure-note{text-align:center;margin-top:1rem;font-size:.55rem;letter-spacing:.18em;
+  color:rgba(255,255,255,.2);position:relative;z-index:1;}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur2"></div>
+
+<canvas id="starCvs"></canvas>
+
+<!-- MOON -->
+<div class="moon-wrap">
+  <div class="moon">
+    <div class="moon-crater crater-1"></div>
+    <div class="moon-crater crater-2"></div>
+    <div class="moon-crater crater-3"></div>
+  </div>
+</div>
+
+<!-- GIRL SILHOUETTE (SVG) -->
+<svg class="girl-silhouette" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- head -->
+  <circle cx="30" cy="14" r="10" fill="#1a0035"/>
+  <!-- hair flowing -->
+  <ellipse cx="30" cy="10" rx="13" ry="8" fill="#0d001f"/>
+  <path d="M40 12 Q50 5 45 25" stroke="#0d001f" stroke-width="4" fill="none"/>
+  <!-- body -->
+  <path d="M22 24 Q30 30 38 24 L40 55 Q30 60 20 55 Z" fill="#1a0035"/>
+  <!-- dress flowing -->
+  <path d="M20 55 Q10 80 15 110 Q30 115 45 110 Q50 80 40 55 Z" fill="#2a0050"/>
+  <!-- arms -->
+  <path d="M22 28 Q12 40 15 50" stroke="#1a0035" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M38 28 Q48 40 45 50" stroke="#1a0035" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- raised hand with heart -->
+  <path d="M15 50 Q8 45 10 38" stroke="#1a0035" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <text x="4" y="36" font-size="8" fill="#ff2d78">♥</text>
+</svg>
+
+<!-- HILLS SVG -->
+<svg class="hills" viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:200px">
+  <path d="M0,200 Q180,80 360,150 Q540,220 720,100 Q900,20 1080,140 Q1260,220 1440,90 L1440,200 Z" fill="#05001e" opacity=".9"/>
+  <path d="M0,200 Q200,120 400,170 Q600,210 800,140 Q1000,80 1200,160 Q1350,210 1440,130 L1440,200 Z" fill="#07002a"/>
+</svg>
+
+<!-- SUCCESS OVERLAY -->
+<div id="succ">
+  <div class="succ-ring">💖</div>
+  <h2 class="succ-title">Welcome, Suhaina…</h2>
+  <p class="succ-sub">Opening your surprise ✨</p>
+</div>
+
+<div id="errToast"></div>
+
+<!-- LOGIN CARD -->
+<div id="scene">
+  <div id="tilt-wrap">
+    <div class="card" id="card">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+
+      <div class="logo-area">
+        <span class="logo-icon">🌙</span>
+        <div class="logo-title">Suhaina.Online</div>
+        <div class="logo-sub">A surprise awaits…</div>
+      </div>
+
+      <div class="divider">
+        <div class="div-line"></div>
+        <span class="div-star">✦</span>
+        <div class="div-line"></div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" novalidate>
+        <div class="fg">
+          <label class="flabel" for="lemail">Email Address</label>
+          <div style="position:relative">
+            <span class="ficon">📧</span>
+            <input class="finput" type="email" id="lemail" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <p class="ferr" id="lerr">Please enter a valid email</p>
+        </div>
+        <div class="fg">
+          <label class="flabel" for="lpass">Password</label>
+          <div style="position:relative">
+            <span class="ficon">🔐</span>
+            <input class="finput" type="password" id="lpass" placeholder="Your secret key" autocomplete="current-password">
+            <button type="button" class="passToggle" onclick="togglePass('lpass',this)">👁</button>
+          </div>
+          <p class="ferr" id="perr">Password must be 6+ characters</p>
+        </div>
+        <button type="submit" class="sbtn" id="lbtn">
+          <span class="sbtn-shine"></span>
+          <span class="sbtn-txt">
+            <span id="lbtnTxt">Enter Her World</span>
+            <div class="sloader" id="lloader"></div>
+          </span>
+        </button>
+        <div class="mode-row">
+          <span>New here? </span>
+          <button type="button" class="mode-link" onclick="switchMode('register')">Create Account</button>
+        </div>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="regForm" novalidate style="display:none">
+        <div class="fg">
+          <label class="flabel" for="remail">Email Address</label>
+          <div style="position:relative">
+            <span class="ficon">📧</span>
+            <input class="finput" type="email" id="remail" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="flabel" for="rpass">Create Password</label>
+          <div style="position:relative">
+            <span class="ficon">🔐</span>
+            <input class="finput" type="password" id="rpass" placeholder="Min 6 characters">
+            <button type="button" class="passToggle" onclick="togglePass('rpass',this)">👁</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="flabel" for="rname">Your Name</label>
+          <div style="position:relative">
+            <span class="ficon">💫</span>
+            <input class="finput" type="text" id="rname" placeholder="e.g. Suhaina">
+          </div>
+        </div>
+        <button type="submit" class="sbtn" id="rbtn">
+          <span class="sbtn-shine"></span>
+          <span class="sbtn-txt">
+            <span id="rbtnTxt">Create My Account</span>
+            <div class="sloader" id="rloader"></div>
+          </span>
+        </button>
+        <div class="mode-row">
+          <span>Have an account? </span>
+          <button type="button" class="mode-link" onclick="switchMode('login')">Sign In</button>
+        </div>
+      </form>
+
+      <p class="secure-note">✦ Your visit is privately recorded for the one who made this ✦</p>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase modules loaded dynamically -->
+<script type="module">
+// ─── Firebase (loaded when firebase.js is present) ───────────────────────────
+let fbAuth, fbSignIn, fbCreate, fbAuthState, fbDB, fbRef, fbPush, fbTS;
+try {
+  const m = await import('./firebase.js');
+  fbAuth = m.auth; fbDB = m.db;
+  fbSignIn = m.signInWithEmailAndPassword;
+  fbCreate = m.createUserWithEmailAndPassword;
+  fbAuthState = m.onAuthStateChanged;
+  fbRef = m.ref; fbPush = m.push; fbTS = m.serverTimestamp;
+
+  // Auto-redirect if already logged in
+  fbAuthState(fbAuth, user => {
+    if(user) window.location.href = 'index.html';
+  });
+} catch(e) { console.warn('Firebase not configured yet'); }
+
+// ─── Expose to window ────────────────────────────────────────────────────────
+window._fb = { fbAuth, fbSignIn, fbCreate, fbDB, fbRef, fbPush, fbTS };
+</script>
+
+<script>
+/* ═══ CURSOR ═══ */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';},{passive:true});
+(function aC(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(aC);})();
+document.querySelectorAll('button,input,.card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hover-cur'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hover-cur'));
+});
+
+/* ═══ 3D TILT ═══ */
+const scene=document.getElementById('scene'),tilt=document.getElementById('tilt-wrap');
+scene.addEventListener('mousemove',e=>{
+  const r=scene.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width-.5,ny=(e.clientY-r.top)/r.height-.5;
+  tilt.style.transform=`rotateY(${nx*12}deg) rotateX(${-ny*9}deg)`;
+});
+scene.addEventListener('mouseleave',()=>{tilt.style.transition='transform 1s cubic-bezier(.34,1.56,.64,1)';tilt.style.transform='none';setTimeout(()=>tilt.style.transition='transform .12s linear',1000);});
+
+/* ═══ STAR CANVAS ═══ */
+const cvs=document.getElementById('starCvs'),ctx=cvs.getContext('2d');
+let W=0,H=0,stars=[];
+function initStars(){
+  W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight;
+  stars=Array.from({length:250},()=>({
+    x:Math.random()*W,y:Math.random()*H*0.75,
+    r:Math.random()*1.5+.2,tw:Math.random()*Math.PI*2,
+    sp:.006+Math.random()*.015,
+    col:Math.random()<.08?[0,245,255]:Math.random()<.05?[255,45,120]:[255,255,255]
+  }));
+}
+function drawStars(){
+  ctx.clearRect(0,0,W,H);
+  stars.forEach(s=>{
+    s.tw+=s.sp;const o=.2+Math.sin(s.tw)*.55;
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${s.col.join(',')},${Math.max(0,o)})`;ctx.fill();
+    if(s.r>1){ctx.beginPath();ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${s.col.join(',')},${o*.12})`;ctx.fill();}
+  });requestAnimationFrame(drawStars);
+}
+initStars();drawStars();
+window.addEventListener('resize',initStars,{passive:true});
+
+/* ═══ HEARTS ON CLICK ═══ */
+const EMOJIS=['💗','💕','💖','💓','💝','✨','🌸','💫','⭐'];
+function spawnH(x,y,n=1){
+  for(let i=0;i<n;i++){
+    const h=document.createElement('div');h.className='fheart';
+    h.textContent=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    h.style.cssText=`left:${x+(Math.random()-.5)*60}px;top:${y}px;font-size:${Math.random()*1+.9}rem;`;
+    document.body.appendChild(h);setTimeout(()=>h.remove(),4000);
+  }
+}
+document.addEventListener('click',e=>spawnH(e.clientX,e.clientY,3),{passive:true});
+document.addEventListener('touchend',e=>{const t=e.changedTouches[0];spawnH(t.clientX,t.clientY,3);},{passive:true});
+
+/* ═══ PERIODIC HEARTS NEAR MOON ═══ */
+function moonHearts(){
+  const mw=document.querySelector('.moon-wrap').getBoundingClientRect();
+  spawnH(mw.left+mw.width/2,mw.top+mw.height,2);
+  setTimeout(moonHearts,2500+Math.random()*2000);
+}
+setTimeout(moonHearts,1000);
+
+/* ═══ HELPERS ═══ */
+function togglePass(id,btn){
+  const inp=document.getElementById(id);
+  inp.type=inp.type==='password'?'text':'password';btn.textContent=inp.type==='password'?'👁':'🙈';
+}
+function switchMode(m){
+  document.getElementById('loginForm').style.display=m==='login'?'':'none';
+  document.getElementById('regForm').style.display=m==='register'?'':'none';
+}
+function showErr(msg){
+  const t=document.getElementById('errToast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function setLoading(btn,loader,txt,label,loading){
+  document.getElementById(btn).disabled=loading;
+  document.getElementById(loader).style.display=loading?'block':'none';
+  document.getElementById(txt).textContent=loading?'Please wait…':label;
+}
+
+/* ═══ DEVICE INFO ═══ */
+function getDevice(){
+  const ua=navigator.userAgent;
+  let os='Unknown',browser='Unknown',device='Desktop';
+  if(/Android/i.test(ua))os='Android';else if(/iPhone|iPad/i.test(ua))os='iOS';
+  else if(/Windows/i.test(ua))os='Windows';else if(/Mac/i.test(ua))os='macOS';
+  else if(/Linux/i.test(ua))os='Linux';
+  if(/Mobi|Android/i.test(ua))device='Mobile';else if(/iPad|Tablet/i.test(ua))device='Tablet';
+  if(/Chrome/i.test(ua)&&!/Edge/i.test(ua))browser='Chrome';
+  else if(/Safari/i.test(ua)&&!/Chrome/i.test(ua))browser='Safari';
+  else if(/Firefox/i.test(ua))browser='Firefox';else if(/Edge/i.test(ua))browser='Edge';
+  return{os,browser,device,screen:`${screen.width}x${screen.height}`,lang:navigator.language,ua:ua.substring(0,200)};
+}
+async function getIP(){
+  try{const r=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(3000)});const d=await r.json();return d.ip||'N/A';}catch{return'N/A';}
+}
+async function logVisit(uid,email){
+  const {fbDB,fbRef,fbPush,fbTS}=window._fb||{};
+  if(!fbDB)return;
+  const ip=await getIP();
+  const dev=getDevice();
+  const now=new Date();
+  const entry={
+    uid,email,ip,
+    time_iso:now.toISOString(),
+    time_ist:now.toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    visits:1,...dev,
+    page:'login',referrer:document.referrer||'direct',
+    serverTime:fbTS()
+  };
+  try{
+    await fbPush(fbRef(fbDB,'visits'),entry);
+    // Increment visit count
+    const vRef=fbRef(fbDB,`users/${uid}/visits`);
+    const {get}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+    const snap=await get(vRef);
+    await (await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js')).set(vRef,(snap.val()||0)+1);
+  }catch(e){console.warn('Log failed',e);}
+}
+
+/* ═══ LOGIN ═══ */
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=document.getElementById('lemail').value.trim();
+  const pass=document.getElementById('lpass').value;
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.getElementById('lerr').classList.add('show');return;}
+  if(pass.length<6){document.getElementById('perr').classList.add('show');return;}
+  document.getElementById('lerr').classList.remove('show');document.getElementById('perr').classList.remove('show');
+  setLoading('lbtn','lloader','lbtnTxt','Enter Her World',true);
+  const {fbAuth,fbSignIn}=window._fb||{};
+  if(!fbAuth){
+    // Demo mode without Firebase
+    setTimeout(()=>{showSuccess();},1000);return;
+  }
+  try{
+    const cred=await fbSignIn(fbAuth,email,pass);
+    await logVisit(cred.user.uid,email);
+    showSuccess();
+  }catch(err){
+    setLoading('lbtn','lloader','lbtnTxt','Enter Her World',false);
+    const msgs={
+      'auth/user-not-found':'No account found. Please register.',
+      'auth/wrong-password':'Incorrect password. Try again.',
+      'auth/too-many-requests':'Too many attempts. Please wait.',
+      'auth/invalid-credential':'Invalid email or password.'
+    };
+    showErr(msgs[err.code]||'Login failed. Please try again.');
+  }
+});
+
+/* ═══ REGISTER ═══ */
+document.getElementById('regForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=document.getElementById('remail').value.trim();
+  const pass=document.getElementById('rpass').value;
+  if(!email||pass.length<6){showErr('Please fill all fields correctly.');return;}
+  setLoading('rbtn','rloader','rbtnTxt','Create My Account',true);
+  const {fbAuth,fbCreate}=window._fb||{};
+  if(!fbAuth){setTimeout(()=>showSuccess(),1000);return;}
+  try{
+    const cred=await fbCreate(fbAuth,email,pass);
+    await logVisit(cred.user.uid,email);
+    showSuccess();
+  }catch(err){
+    setLoading('rbtn','rloader','rbtnTxt','Create My Account',false);
+    showErr(err.message||'Registration failed.');
+  }
+});
+
+function showSuccess(){
+  document.getElementById('succ').classList.add('show');
+  for(let i=0;i<5;i++)setTimeout(()=>{for(let j=0;j<6;j++)spawnH(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.8);},i*300);
+  setTimeout(()=>window.location.href='index.html',2800);
+}
+</script>
+</body>
+</html>
