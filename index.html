@@ -272,33 +272,10 @@ body {
 }
 .finput.err { border-color:rgba(255,45,120,.6);box-shadow:0 0 0 4px rgba(255,45,120,.08); }
 
-/* DOB Grid */
-.dob-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem; }
-.dob-select {
-  width:100%;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,150,180,.15);
-  border-radius:12px;
-  padding:.85rem .5rem;
-  color:#fff;
-  font-family:var(--font-e);
-  font-size:.88rem;
-  text-align:center;
-  outline:none;
-  -webkit-appearance:none;
-  appearance:none;
-  transition: all .35s var(--spring);
-}
-.dob-select:focus {
-  border-color:rgba(255,45,120,.45);
-  background:rgba(255,45,120,.04);
-  box-shadow:0 0 0 4px rgba(255,45,120,.06);
-  transform:translateY(-1px);
-}
-.dob-select.err { border-color:rgba(255,45,120,.6); }
-.dob-select option { background:#1a0020;color:#fff; }
-.dob-sub { display:block;text-align:center;margin-top:.3rem;font-family:var(--font-c);font-size:.45rem;letter-spacing:.2em;color:rgba(255,150,180,.3);text-transform:uppercase; }
-@media(pointer:fine){.dob-select{cursor:none;}}
+/* Password toggle */
+.pw-toggle { position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,150,180,.4);font-size:.85rem;transition:color .3s;padding:0;line-height:1; }
+.pw-toggle:hover { color:rgba(255,150,180,.85); }
+@media(pointer:fine){.pw-toggle{cursor:none;}}
 
 /* ── SUBMIT BUTTON ── */
 .sbtn {
@@ -387,46 +364,27 @@ body {
     </div>
 
     <form id="lform" novalidate autocomplete="off">
-      <!-- Register Number -->
+      <!-- Username -->
       <div class="fg">
-        <label class="fg-lbl" for="f-reg">College Register Number</label>
+        <label class="fg-lbl" for="f-user">Username</label>
         <div class="fi-wrap">
           <span class="fi-icon">🎓</span>
-          <input class="finput" type="text" id="f-reg"
-            placeholder="e.g. 23UIT102"
-            maxlength="12" autocomplete="off" spellcheck="false"
-            autocapitalize="characters" autocorrect="off">
+          <input class="finput" type="text" id="f-user"
+            placeholder="Enter your username"
+            maxlength="20" autocomplete="off" spellcheck="false"
+            autocapitalize="none" autocorrect="off">
         </div>
       </div>
 
-      <!-- Date of Birth -->
+      <!-- Password -->
       <div class="fg">
-        <label class="fg-lbl">Date of Birth</label>
-        <div class="dob-grid">
-          <div>
-            <select class="dob-select" id="sel-day" aria-label="Day">
-              <option value="" disabled selected>Day</option>
-            </select>
-            <span class="dob-sub">Day</span>
-          </div>
-          <div>
-            <select class="dob-select" id="sel-mon" aria-label="Month">
-              <option value="" disabled selected>Month</option>
-              <option value="1">January</option><option value="2">February</option>
-              <option value="3">March</option><option value="4">April</option>
-              <option value="5">May</option><option value="6">June</option>
-              <option value="7">July</option><option value="8">August</option>
-              <option value="9">September</option><option value="10">October</option>
-              <option value="11">November</option><option value="12">December</option>
-            </select>
-            <span class="dob-sub">Month</span>
-          </div>
-          <div>
-            <select class="dob-select" id="sel-yr" aria-label="Year">
-              <option value="" disabled selected>Year</option>
-            </select>
-            <span class="dob-sub">Year</span>
-          </div>
+        <label class="fg-lbl" for="f-pass">Password</label>
+        <div class="fi-wrap">
+          <span class="fi-icon">🔑</span>
+          <input class="finput" type="password" id="f-pass"
+            placeholder="Enter your password"
+            maxlength="30" autocomplete="off">
+          <button type="button" class="pw-toggle" id="pw-toggle" aria-label="Show password">👁</button>
         </div>
       </div>
 
@@ -460,12 +418,12 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // ── REPLACE WITH YOUR FIREBASE CONFIG ──
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDSXGCCHgiKHQeIxsrA5J0rLyAoOQZ52vw",
-  authDomain: "labs-48a69.firebaseapp.com",
-  projectId: "labs-48a69",
-  storageBucket: "labs-48a69.firebasestorage.app",
-  messagingSenderId: "619948653377",
-  appId: "1:619948653377:web:ddea5848a8553fdcc57fc0"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 let app, auth, db;
@@ -598,145 +556,90 @@ document.getElementById('scene').addEventListener('mouseleave',()=>{
   setTimeout(()=>card.style.transition='transform .12s linear',900);
 });
 
-/* ══ POPULATE DOB DROPDOWNS ══ */
-const selDay=document.getElementById('sel-day');
-const selYr=document.getElementById('sel-yr');
-for(let d=1;d<=31;d++){const o=document.createElement('option');o.value=d;o.textContent=String(d).padStart(2,'0');selDay.appendChild(o);}
-const cy=new Date().getFullYear();
-for(let y=cy;y>=1990;y--){const o=document.createElement('option');o.value=y;o.textContent=y;selYr.appendChild(o);}
+/* ══ PASSWORD TOGGLE ══ */
+document.getElementById('pw-toggle').addEventListener('click',()=>{
+  const f=document.getElementById('f-pass');
+  const show=f.type==='password';
+  f.type=show?'text':'password';
+  document.getElementById('pw-toggle').textContent=show?'🙈':'👁';
+});
 
-/* ══ FORM LOGIC ══ */
+/* ══ FORM HELPERS ══ */
 function showErr(msg){
   const el=document.getElementById('err-inner');
-  el.textContent=msg;el.classList.remove('show');
-  void el.offsetWidth;el.classList.add('show');
+  el.textContent=msg; el.classList.remove('show');
+  void el.offsetWidth; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),5000);
-  document.querySelectorAll('.finput,.dob-select').forEach(x=>x.classList.add('err'));
+  document.querySelectorAll('.finput').forEach(x=>x.classList.add('err'));
 }
-function clearErrs(){document.querySelectorAll('.finput,.dob-select').forEach(x=>x.classList.remove('err'));}
+function clearErrs(){ document.querySelectorAll('.finput').forEach(x=>x.classList.remove('err')); }
 function setLoading(on){
   document.getElementById('sbtn').disabled=on;
   document.getElementById('sloader').style.display=on?'block':'none';
   document.getElementById('sbtn-lbl').textContent=on?'Entering…':'Enter Your World';
 }
 
-/* Device info collector (silent) */
-function getDeviceInfo(){
-  const ua=navigator.userAgent;
-  let device='Desktop',os='Unknown',browser='Unknown';
-  if(/Android/i.test(ua))os='Android';
-  else if(/iPhone|iPad/i.test(ua))os='iOS';
-  else if(/Windows/i.test(ua))os='Windows';
-  else if(/Mac/i.test(ua))os='macOS';
-  else if(/Linux/i.test(ua))os='Linux';
-  if(/Mobi|Android/i.test(ua))device='Mobile';
-  else if(/iPad|Tablet/i.test(ua))device='Tablet';
-  if(/Chrome/i.test(ua)&&!/Edge/i.test(ua))browser='Chrome';
-  else if(/Safari/i.test(ua)&&!/Chrome/i.test(ua))browser='Safari';
-  else if(/Firefox/i.test(ua))browser='Firefox';
-  else if(/Edge/i.test(ua))browser='Edge';
-  return{device,os,browser,
-    screenRes:`${screen.width}x${screen.height}`,
-    colorDepth:screen.colorDepth,
-    language:navigator.language,
-    timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,
-    platform:navigator.platform||'N/A',
-    cookiesEnabled:navigator.cookieEnabled,
-    online:navigator.onLine,
-    referrer:document.referrer||'direct',
-    touchSupport:'ontouchstart' in window,
-    devicePixelRatio:window.devicePixelRatio||1
-  };
-}
+/* ══ SUBMIT — pure JS, zero Firebase ══ */
+document.getElementById('lform').addEventListener('submit', async e => {
+  e.preventDefault();
+  clearErrs();
 
-async function getIP(){
-  try{const r=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(3000)});return(await r.json()).ip||'N/A';}catch{return'N/A';}
-}
+  const username = document.getElementById('f-user').value.trim();
+  const password = document.getElementById('f-pass').value;
 
-async function logVisit(regno){
-  if(!window.__fb)return;
-  const{db,collection,addDoc,serverTimestamp}=window.__fb;
-  try{
-    const ip=await getIP();
-    const dev=getDeviceInfo();
-    await addDoc(collection(db,'visits'),{
-      page:'login_attempt',
-      regno,ip,
-      loginTime:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
-      serverTimestamp:serverTimestamp(),
-      ...dev
-    });
-  }catch(e){console.warn('Log:',e);}
-}
+  if(!username){ showErr('Please enter your username 💕'); return; }
+  if(!password){ showErr('Please enter your password 🌸'); return; }
 
-/* ══ SUBMIT ══ */
-document.getElementById('lform').addEventListener('submit',async e=>{
-  e.preventDefault();clearErrs();
-  const regno=document.getElementById('f-reg').value.trim().toUpperCase();
-  const dDay=parseInt(document.getElementById('sel-day').value,10);
-  const dMon=parseInt(document.getElementById('sel-mon').value,10);
-  const dYr=parseInt(document.getElementById('sel-yr').value,10);
+  // ── Credentials (only these two lines matter) ──
+  const VALID_USER = '23UIT102';
+  const VALID_PASS = '21/04/2006';
 
-  if(!regno){showErr('Please enter your register number, love 💕');return;}
-  if(!dDay||!dMon||!dYr){showErr('Please select your complete date of birth 🌸');return;}
-
-  // Credentials
-  const VALID_REG='23UIT102';
-  const VALID_DAY=21,VALID_MON=4,VALID_YR=2006;
-
-  if(regno!==VALID_REG||dDay!==VALID_DAY||dMon!==VALID_MON||dYr!==VALID_YR){
+  if(username !== VALID_USER || password !== VALID_PASS){
     const errs=[
       '✨ Hmm… are you the one this was made for? 💕',
       '🌸 This world belongs to someone very special. Try again…',
       '💫 Only one heart knows the way in…',
     ];
     showErr(errs[Math.floor(Math.random()*errs.length)]);
-    await logVisit(regno+'_FAILED');
     return;
   }
 
-  clearErrs();setLoading(true);
-
-  // Firebase sign-in
-  const fbEmail='23UIT102@suhaina.love';
-  const fbPass='Suhaina@21042006';
-
-  if(window.__fb){
-    const{auth,signInWithEmailAndPassword}=window.__fb;
-    try{
-      await signInWithEmailAndPassword(auth,fbEmail,fbPass);
-      await logVisit(regno+'_SUCCESS');
-    }catch(err){
-      await logVisit(regno+'_AUTH_ERR');
-    }
-  }else{
-    await new Promise(r=>setTimeout(r,900));
-  }
+  // Correct — proceed
+  clearErrs();
+  setLoading(true);
+  await new Promise(r=>setTimeout(r,900));
   sessionStorage.setItem('__suhaina_auth','granted');
 
-  // Success animation
-  const sov=document.getElementById('sov');sov.classList.add('show');
-  for(let i=0;i<8;i++)setTimeout(()=>{for(let j=0;j<5;j++)spawnHeart(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.7);},i*150);
-  setTimeout(()=>window.location.href='main.html',2800);
+  // Success burst + redirect
+  const sov=document.getElementById('sov');
+  sov.classList.add('show');
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      for(let j=0;j<5;j++) spawnHeart(Math.random()*window.innerWidth, Math.random()*window.innerHeight*.7);
+    }, i*150);
+  }
+  setTimeout(()=>window.location.href='main.html', 2800);
 });
 
 /* ══ FORMSPREE MESSAGE ══ */
-// Replace YOUR_FORMSPREE_ID with your actual Formspree form ID
-const FORMSPREE_ENDPOINT='https://formspree.io/f/YOUR_FORMSPREE_ID';
-document.getElementById('msgSendBtn').addEventListener('click',async()=>{
+// Replace YOUR_FORMSPREE_ID with your actual ID from formspree.io
+const FORMSPREE_ENDPOINT='https://formspree.io/f/xvzvadaq';
+document.getElementById('msgSendBtn').addEventListener('click', async () => {
   const msg=document.getElementById('msgTa').value.trim();
-  if(!msg){document.getElementById('msgTa').focus();return;}
+  if(!msg){ document.getElementById('msgTa').focus(); return; }
   const btn=document.getElementById('msgSendBtn');
-  btn.textContent='Sending…';btn.disabled=true;
+  btn.textContent='Sending…'; btn.disabled=true;
   try{
-    const dev=getDeviceInfo();const ip=await getIP();
     const res=await fetch(FORMSPREE_ENDPOINT,{
-      method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({message:msg,from:'Suhaina Login Page',ip,device:dev.device,os:dev.os,browser:dev.browser,time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})})
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({message:msg,from:'Suhaina Login Page',time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})})
     });
-    if(res.ok){btn.textContent='Sent with love ✦';setTimeout(()=>{btn.textContent='Send Message ✦';btn.disabled=false;document.getElementById('msgTa').value='';},3000);}
-    else{btn.textContent='Try again ✦';btn.disabled=false;}
-  }catch{btn.textContent='Try again ✦';btn.disabled=false;}
+    if(res.ok){
+      btn.textContent='Sent with love ✦';
+      setTimeout(()=>{btn.textContent='Send Message ✦';btn.disabled=false;document.getElementById('msgTa').value='';},3000);
+    } else { btn.textContent='Try again ✦'; btn.disabled=false; }
+  } catch { btn.textContent='Try again ✦'; btn.disabled=false; }
 });
 
 document.addEventListener('contextmenu',e=>e.preventDefault());
