@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Prevent indexing of unnecessary files
+Disallow: /SECURITY.md
+Disallow: /*.mp4$
+Disallow: /js/
+
+# Allow important assets
+Allow: /images/
+Allow: /audios/
+
+# Crawl settings
+Crawl-delay: 5
+
+# Sitemap location
+Sitemap: https://suhaina.online/sitemap.xml
