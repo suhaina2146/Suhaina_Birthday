@@ -38,12 +38,12 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch;font-size:16px;}
-body{background:var(--frost);color:var(--text);font-family:var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-button,a{border:none;background:none;cursor:pointer;}
+body{background:var(--frost);color:var(--text);font-family:var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeSpeed;}
+button,a{border:none;background:none;cursor:pointer;touch-action:manipulation;}
 img,video{display:block;max-width:100%;}
 ::-webkit-scrollbar{width:2px;}::-webkit-scrollbar-thumb{background:linear-gradient(var(--royal),var(--deep));border-radius:2px;}
 
-#cvsBg,#cvsSnow,#cvsConf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;}
+#cvsBg,#cvsSnow,#cvsConf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;will-change:transform;}
 #cvsBg{z-index:0;}#cvsSnow{z-index:1;}#cvsConf{z-index:9990;}
 
 #loading{position:fixed;inset:0;z-index:99998;background:linear-gradient(135deg,#daf0ff,#eef8ff 50%,#d8ecff);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.4s,visibility 1.4s;}
@@ -59,8 +59,8 @@ img,video{display:block;max-width:100%;}
 
 #prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:10001;background:linear-gradient(90deg,var(--royal),var(--deep),var(--goldL));border-radius:2px;transition:width .06s linear;}
 
-#nav{position:fixed;top:0;left:0;right:0;z-index:9000;display:flex;align-items:center;justify-content:space-between;padding:.8rem clamp(1rem,4vw,2.5rem);background:rgba(232,244,255,.88);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px);border-bottom:1px solid rgba(100,180,255,.15);box-shadow:0 2px 24px rgba(70,140,200,.08);transform:translateY(-100%);transition:transform .7s var(--silk);}
-#nav.show{transform:translateY(0);}
+#nav{position:fixed;top:0;left:0;right:0;z-index:9000;display:flex;align-items:center;justify-content:space-between;padding:.8rem clamp(1rem,4vw,2.5rem);background:rgba(232,244,255,.88);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px);border-bottom:1px solid rgba(100,180,255,.15);box-shadow:0 2px 24px rgba(70,140,200,.08);transform:translateY(-100%) translateZ(0);transition:transform .7s var(--silk);will-change:transform;}
+#nav.show{transform:translateY(0) translateZ(0);}
 .nav-brand{font-family:var(--script);font-size:clamp(1.4rem,4vw,2rem);color:var(--royal);}
 .nav-links{display:flex;gap:clamp(.8rem,2vw,2rem);}
 .nav-links a{font-family:var(--body);font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:var(--sub);text-decoration:none;transition:color .3s;font-weight:400;}
@@ -98,7 +98,8 @@ section{position:relative;z-index:2;}
 /* HERO */
 #hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(5rem,10vw,8rem) clamp(1rem,5vw,2.5rem) clamp(3rem,5vw,5rem);overflow:hidden;background:radial-gradient(ellipse 90% 70% at 50% -5%,rgba(200,235,255,.9),rgba(232,244,255,0) 60%),radial-gradient(ellipse 60% 50% at 85% 75%,rgba(180,220,255,.5),transparent 60%),var(--frost);}
 .h-crown{font-size:clamp(1.6rem,4vw,3rem);animation:fadeUp .8s ease forwards .1s;opacity:0;margin-bottom:.4rem;}
-.h-eyebrow{font-family:var(--body);font-size:clamp(.44rem,.7rem,1rem);letter-spacing:.4em;text-transform:uppercase;color:var(--royal);opacity:0;font-weight:300;animation:fadeUp .9s ease forwards .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90vw;}
+.h-eyebrow{font-family:var(--body);font-size:clamp(.44rem,.7rem,1rem);letter-spacing:.4em;text-transform:uppercase;color:var(--royal);opacity:0;font-weight:300;animation:fadeUp .9s ease forwards .3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:96vw;margin-bottom:.8rem;}
+@media(max-width:480px){.h-eyebrow{font-size:clamp(.38rem,.65rem,1rem);letter-spacing:.22em;}}
 .h-title{font-family:var(--serif);font-size:clamp(1.8rem,6vw,7rem);line-height:1;color:var(--text);animation:fadeUp 1.4s var(--sp) forwards .5s;opacity:0;white-space:nowrap;}
 .h-title .ice{color:var(--royal2);}
 .h-name{font-family:var(--script);font-size:clamp(2.4rem,8vw,8.5rem);color:var(--royal);filter:drop-shadow(0 2px 18px rgba(100,180,255,.3));animation:fadeUp 1.2s var(--sp) forwards 1.1s;opacity:0;line-height:1.1;}
@@ -107,8 +108,9 @@ section{position:relative;z-index:2;}
 .h-dl.r{background:linear-gradient(90deg,rgba(100,180,255,.5),transparent);}
 .h-sf{font-size:1rem;color:var(--deep);}
 .h-sub{font-family:var(--ele);font-style:italic;font-size:clamp(.88rem,2vw,1.1rem);color:var(--sub);max-width:440px;line-height:1.9;animation:fadeUp .8s ease forwards 1.9s;opacity:0;min-height:2.4em;}
-.h-born{display:inline-flex;align-items:center;gap:.7rem;background:rgba(255,255,255,.55);border:1px solid rgba(100,180,255,.25);border-radius:50px;padding:.45rem 1.2rem;margin-top:1rem;box-shadow:var(--sh);backdrop-filter:blur(12px);animation:fadeUp .7s ease forwards 2.2s;opacity:0;max-width:90vw;}
-.h-born span{font-family:var(--serif);font-size:clamp(.42rem,1vw,.75rem);color:var(--royal2);letter-spacing:.08em;white-space:nowrap;}
+.h-born{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.55);border:1px solid rgba(100,180,255,.25);border-radius:50px;padding:.45rem 1rem;margin-top:1rem;box-shadow:var(--sh);backdrop-filter:blur(12px);animation:fadeUp .7s ease forwards 2.2s;opacity:0;max-width:96vw;white-space:nowrap;}
+.h-born span{font-family:var(--serif);font-size:clamp(.38rem,.85vw,.7rem);color:var(--royal2);letter-spacing:.06em;white-space:nowrap;}
+@media(max-width:420px){.h-born{gap:.3rem;padding:.4rem .8rem;}.h-born span{font-size:clamp(.34rem,2.8vw,.62rem);letter-spacing:.03em;}}
 .h-letters{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:1.2rem auto 0;animation:fadeUp .7s ease forwards 2.5s;opacity:0;}
 .lbox{display:inline-flex;align-items:center;justify-content:center;width:clamp(28px,4.5vw,46px);height:clamp(28px,4.5vw,46px);background:rgba(255,255,255,.8);border:1px solid rgba(100,180,255,.28);border-radius:10px;font-family:var(--serif);font-size:clamp(.7rem,1.8vw,1.3rem);color:var(--royal2);box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.95);animation:boxPop 1s var(--sp) both;}
 @keyframes boxPop{from{opacity:0;transform:translateY(16px) scale(.6);}to{opacity:1;transform:none;}}
@@ -346,7 +348,7 @@ audio{display:none;}
 .dlg-name{font-family:var(--body);font-size:.44rem;letter-spacing:.22em;color:var(--fade);text-transform:uppercase;margin-top:.4rem;}
 
 /* PLAYER */
-#player{position:fixed;bottom:0;left:0;right:0;z-index:8500;background:rgba(232,244,255,.93);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px);border-top:1px solid rgba(100,180,255,.15);box-shadow:0 -4px 24px rgba(70,140,200,.08);padding:.7rem clamp(.8rem,3vw,2rem);display:flex;align-items:center;gap:.8rem;transform:translateY(100%);transition:transform .6s var(--sp);}
+#player{position:fixed;bottom:0;left:0;right:0;z-index:8500;background:rgba(232,244,255,.93);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px);border-top:1px solid rgba(100,180,255,.15);box-shadow:0 -4px 24px rgba(70,140,200,.08);padding:.7rem clamp(.8rem,3vw,2rem);display:flex;align-items:center;gap:.8rem;transform:translateY(100%);transition:transform .6s var(--sp);will-change:transform;}
 #player.show{transform:translateY(0);}
 .pb-art{width:42px;height:42px;border-radius:11px;flex-shrink:0;overflow:hidden;border:1px solid rgba(100,180,255,.2);position:relative;}
 .pb-art-inner{width:100%;height:100%;border-radius:50%;animation:vinylSpin 4s linear infinite;position:absolute;inset:0;}
@@ -360,7 +362,7 @@ audio{display:none;}
 .pb-btn svg{width:15px;height:15px;}
 .pb-play{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(100,180,255,.35);background:rgba(100,180,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;}
 .pb-play:hover{box-shadow:var(--glow);}
-.pb-play svg{fill:var(--royal2);width:15px;height:15px;}
+.pb-play svg{fill:var(--royal2);width:15px;height:15px;color:var(--royal2);}
 .pb-prog{flex:1;min-width:50px;max-width:200px;height:3px;background:rgba(100,180,255,.12);border-radius:3px;cursor:pointer;overflow:hidden;}
 .pb-prog-fill{height:100%;background:linear-gradient(90deg,var(--royal),var(--deep));border-radius:3px;width:0%;transition:width .3s linear;}
 @media(max-width:500px){.pb-prog{display:none;}.pb-btn:not(.pb-play){display:none;}}
@@ -823,7 +825,7 @@ audio{display:none;}
   <div class="pb-info"><div class="pb-title" id="pbTitle">Loading…</div><div class="pb-artist" id="pbArtist">Tamil Romantic</div></div>
   <div class="pb-ctrl">
     <button class="pb-btn" onclick="prevSong()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M19 20L9 12l10-8v16z"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
-    <button class="pb-btn pb-play" id="pbPlayBtn" onclick="togglePlay()"><svg id="pbIco" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg></button>
+    <button class="pb-btn pb-play" id="pbPlayBtn" onclick="togglePlay()"><svg id="pbIco" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" fill="currentColor"/></svg></button>
     <button class="pb-btn" onclick="nextSong()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 4l10 8-10 8V4z"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
   </div>
   <div class="pb-prog" id="pbProg" onclick="seekAud(event)"><div class="pb-prog-fill" id="pbFill"></div></div>
@@ -841,7 +843,7 @@ audio{display:none;}
     <span class="wish-crown">👑</span>
     <div class="wish-title">Happy Birthday</div>
     <div class="wish-sub">Suhaina ❄️</div>
-    <p class="wish-msg">"Always happy ya iru and I'm keeping make dua for u that all the things will become success . I'm always here to support you always"</p>
+    <p class="wish-msg">"Stay positive always. I’m constantly praying for your success, and I truly believe everything you’re working toward will fall into place. No matter what happens, I’m always here for you—supporting you every step of the way."</p>
     <div class="wish-sig">— Your Prince 🤴</div>
     <svg class="wish-couple" viewBox="0 0 220 180" width="200" xmlns="http://www.w3.org/2000/svg" fill="none">
       <defs>
@@ -1144,11 +1146,14 @@ function drawStar(ctx,x,y,r,col,alpha){
 function resize(){
   W=bgC.width=snC.width=cfC.width=window.innerWidth;
   H=bgC.height=snC.height=cfC.height=window.innerHeight;
+  const isMobile=W<768;
+  const snowCount=isMobile?30:60;
   orbs=Array.from({length:4},(_,i)=>({x:Math.random()*W,y:Math.random()*H,r:100+Math.random()*160,vx:(Math.random()-.5)*.1,vy:(Math.random()-.5)*.08,hue:i%2?200:210,a:.025+Math.random()*.028}));
-  snow=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*3.5+1.5,vx:(Math.random()-.5)*.2,vy:Math.random()*.3+.08,op:Math.random()*.3+.08,wobble:Math.random()*Math.PI*2,wS:.012+Math.random()*.014,rot:Math.random()*Math.PI*2,rS:(Math.random()-.5)*.02}));
+  snow=Array.from({length:snowCount},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*3.5+1.5,vx:(Math.random()-.5)*.2,vy:Math.random()*.3+.08,op:Math.random()*.3+.08,wobble:Math.random()*Math.PI*2,wS:.012+Math.random()*.014,rot:Math.random()*Math.PI*2,rS:(Math.random()-.5)*.02}));
 }
 
 function drawAll(){
+  if(document.hidden){requestAnimationFrame(drawAll);return;}
   bgX.clearRect(0,0,W,H);
   orbs.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.x<-o.r)o.x=W+o.r;if(o.x>W+o.r)o.x=-o.r;if(o.y<-o.r)o.y=H+o.r;if(o.y>H+o.r)o.y=-o.r;const g=bgX.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);g.addColorStop(0,`hsla(${o.hue},60%,88%,${o.a})`);g.addColorStop(1,'transparent');bgX.fillStyle=g;bgX.fillRect(0,0,W,H);});
   snX.clearRect(0,0,W,H);
@@ -1170,7 +1175,8 @@ function launchFW(golden=false){for(let b=0;b<12;b++)setTimeout(()=>{const bx=Ma
 // ── TRAIL ──
 const TRAIL=['❄','❅','❆','✦','♦','🔷','💎'];let ltT=0;
 function spawnTrail(x,y,force=false){const now=Date.now();if(!force&&now-ltT<90)return;ltT=now;const el=document.createElement('div');el.className='trail-el';el.textContent=TRAIL[~~(Math.random()*TRAIL.length)];el.style.cssText=`left:${x}px;top:${y}px;font-size:${.6+Math.random()*.6}rem;`;document.body.appendChild(el);setTimeout(()=>el.remove(),2100);}
-document.addEventListener('mousemove',e=>spawnTrail(e.clientX,e.clientY),{passive:true});
+let _trailTick=false;
+document.addEventListener('mousemove',e=>{if(!_trailTick){_trailTick=true;requestAnimationFrame(()=>{spawnTrail(e.clientX,e.clientY);_trailTick=false;});}},{passive:true});
 document.addEventListener('touchmove',e=>{const t=e.touches[0];spawnTrail(t.clientX,t.clientY,true);},{passive:true});
 document.addEventListener('click',e=>{for(let i=0;i<4;i++)spawnTrail(e.clientX+(Math.random()-.5)*36,e.clientY+(Math.random()-.5)*36,true);},{passive:true});
 document.addEventListener('touchend',e=>{const t=e.changedTouches[0];for(let i=0;i<4;i++)spawnTrail(t.clientX+(Math.random()-.5)*28,t.clientY+(Math.random()-.5)*28,true);},{passive:true});
@@ -1179,6 +1185,7 @@ document.addEventListener('touchend',e=>{const t=e.changedTouches[0];for(let i=0
 const elsaHead=document.getElementById('elsaHead');
 const elsaNeck=document.getElementById('elsaNeck');
 let tFX=window.innerWidth/2,tFY=window.innerHeight/2,cFX=tFX,cFY=tFY;
+let _elsaTick=false;
 document.addEventListener('mousemove',e=>{tFX=e.clientX;tFY=e.clientY;},{passive:true});
 document.addEventListener('touchmove',e=>{tFX=e.touches[0].clientX;tFY=e.touches[0].clientY;},{passive:true});
 function updateElsa(){
@@ -1210,16 +1217,22 @@ window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loadi
 const navEl=document.getElementById('nav');
 const SECS=['hero','bday-counter','main-video','vid-gallery','gallery','letter','music','crystal-wishes','surprises','response-letter','finale'];
 const ndots=document.querySelectorAll('.nd');let lastY=0;
+let _scrollTick=false;
 window.addEventListener('scroll',()=>{
-  const sy=window.scrollY;
-  document.getElementById('prog').style.width=((sy/(document.documentElement.scrollHeight-window.innerHeight))*100)+'%';
-  navEl.classList.toggle('show',sy>80);
-  if(sy>lastY+12&&sy>300)navEl.style.transform='translateY(-100%)';
-  else if(sy<lastY-12||sy<100)navEl.style.transform='';
-  lastY=sy;
-  let ci=0;SECS.forEach((id,i)=>{const el=document.getElementById(id);if(el&&sy>=el.offsetTop-window.innerHeight*.55)ci=i;});
-  ndots.forEach((d,i)=>d.classList.toggle('on',i===ci));
-  checkFin();
+  if(_scrollTick)return;
+  _scrollTick=true;
+  requestAnimationFrame(()=>{
+    const sy=window.scrollY;
+    document.getElementById('prog').style.width=((sy/(document.documentElement.scrollHeight-window.innerHeight))*100)+'%';
+    navEl.classList.toggle('show',sy>80);
+    if(sy>lastY+12&&sy>300)navEl.style.transform='translateY(-100%)';
+    else if(sy<lastY-12||sy<100)navEl.style.transform='';
+    lastY=sy;
+    let ci=0;SECS.forEach((id,i)=>{const el=document.getElementById(id);if(el&&sy>=el.offsetTop-window.innerHeight*.55)ci=i;});
+    ndots.forEach((d,i)=>d.classList.toggle('on',i===ci));
+    checkFin();
+    _scrollTick=false;
+  });
 },{passive:true});
 function sc(id,e){e&&e.preventDefault();document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
 
@@ -1414,11 +1427,11 @@ lbImg.addEventListener('touchend',()=>{lbDrag=false;lbP1=null;lbP2=null;},{passi
 
 // ── MUSIC — Auto-start playlist ──
 const SONGS=[
-  {title:'Venmathi Venmathiye',artist:'AR Rahman — Minnale',bg:'linear-gradient(135deg,#0a2040,#1a5080)',audioUrl:'audios/Velai Illa Pattadhaari.mp3'},
-  {title:'Kadhal Rojave',artist:'AR Rahman — Roja',bg:'linear-gradient(135deg,#0a1a50,#1a3070)',audioUrl:'audios/enna solla bgm.mp3'},
-  {title:'Snehithane',artist:'AR Rahman — Alaipayuthey',bg:'linear-gradient(135deg,#0a3040,#1a6080)',audioUrl:'audios/Nee Partha Vizhigal BGM.mp3'},
-  {title:'Snehithane',artist:'AR Rahman — Alaipayuthey',bg:'linear-gradient(135deg,#0a3040,#1a6080)',audioUrl:'audios/velicha poove bgm.mp3'},
-  {title:'Uyire Uyire',artist:'AR Rahman — Bombay',bg:'linear-gradient(135deg,#1a0a40,#3a1a80)',audioUrl:'audios/Pookal Pookum Tharunam Remix - Ringtone  kalaivananoffl.mp3'},
+  {title:'Song1',artist:'',bg:'linear-gradient(135deg,#0a2040,#1a5080)',audioUrl:'audios/Velai Illa Pattadhaari.mp3'},
+  {title:'Song2',artist:'',bg:'linear-gradient(135deg,#0a1a50,#1a3070)',audioUrl:'audios/enna solla bgm.mp3'},
+  {title:'Song3',artist:'',bg:'linear-gradient(135deg,#0a3040,#1a6080)',audioUrl:'audios/Nee Partha Vizhigal BGM.mp3'},
+  {title:'Song4',artist:'',bg:'linear-gradient(135deg,#0a3040,#1a6080)',audioUrl:'audios/velicha poove bgm.mp3'},
+  {title:'Song5',artist:'',bg:'linear-gradient(135deg,#1a0a40,#3a1a80)',audioUrl:'audios/Pookal Pookum Tharunam Remix - Ringtone  kalaivananoffl.mp3'},
 ];
 let curSong=-1,playing=false;
 const aud=document.getElementById('aud');
@@ -1457,7 +1470,7 @@ window.addEventListener('load',()=>{
 });
 
 function togglePlay(){if(!aud.src&&curSong>=0)playSong(curSong);else{playing=!playing;if(playing)aud.play().catch(()=>{});else aud.pause();}updatePlayBtn();const vinyl=document.getElementById('mnVinyl'),mnEq=document.getElementById('mnEq');vinyl.classList.toggle('playing',playing);mnEq.classList.toggle('active',playing);}
-function updatePlayBtn(){const ico=document.getElementById('pbIco'),mi=document.getElementById('mnIco');const pd='M6 19h4V5H6v14zm8-14v14h4V5h-4z',pl='M5 3l14 9-14 9V3z';if(ico)ico.setAttribute('d',playing?pd:pl);if(mi)mi.innerHTML=`<path d="${playing?pd:pl}" fill="rgba(200,235,255,1)"/>`;}
+function updatePlayBtn(){const icoSvg=document.getElementById('pbIco'),mi=document.getElementById('mnIco');const pd='M6 19h4V5H6v14zm8-14v14h4V5h-4z',pl='M5 3l14 9-14 9V3z';if(icoSvg){const p=icoSvg.querySelector('path');if(p)p.setAttribute('d',playing?pd:pl);else icoSvg.innerHTML=`<path d="${playing?pd:pl}"/>`;}if(mi)mi.innerHTML=`<path d="${playing?pd:pl}" fill="rgba(200,235,255,1)"/>`;}
 function nextSong(){playSong((curSong+1)%SONGS.length);}
 function prevSong(){playSong((curSong-1+SONGS.length)%SONGS.length);}
 function seekAud(e){const r=e.currentTarget.getBoundingClientRect();aud.currentTime=(e.clientX-r.left)/r.width*(aud.duration||0);}
